@@ -1,90 +1,60 @@
 """
-60-Second Undervalued Test Module
-
-Core algorithm for quickly assessing cryptocurrency undervaluation.
+undervalued_test.py
+-------------------
+Runs the 60-second undervalued test using:
+  • Live data from fetcher
+  • White-paper numbers you type in
 """
 
-class UndervaluedTest:
-    """Implements the 60-second undervalued test algorithm."""
-    
-    def __init__(self):
-        """Initialize the undervalued test with default parameters."""
-        self.weights = {
-            "market_metrics": 0.4,    # 40% - Price, volume, market cap analysis
-            "fundamentals": 0.35,     # 35% - Technology, use case, team
-            "momentum": 0.15,         # 15% - Price momentum and trends
-            "sentiment": 0.1          # 10% - Market sentiment indicators
-        }
-    
-    def run_test(self, market_data, whitepaper_analysis, historical_data):
-        """
-        Run the complete 60-second undervalued test.
-        
-        Args:
-            market_data (dict): Current market data
-            whitepaper_analysis (dict): Whitepaper analysis results
-            historical_data (list): Historical price data
-            
-        Returns:
-            dict: Test results with score and recommendation
-        """
-        # TODO: Implement the complete test
-        scores = {
-            "market_score": self._analyze_market_metrics(market_data),
-            "fundamental_score": self._analyze_fundamentals(whitepaper_analysis),
-            "momentum_score": self._analyze_momentum(historical_data),
-            "sentiment_score": self._analyze_sentiment(market_data)
-        }
-        
-        overall_score = self._calculate_weighted_score(scores)
-        recommendation = self._get_recommendation(overall_score)
-        
-        return {
-            "scores": scores,
-            "overall_score": overall_score,
-            "recommendation": recommendation,
-            "reasoning": self._generate_reasoning(scores, recommendation)
-        }
-    
-    def _analyze_market_metrics(self, market_data):
-        """Analyze market cap, volume, and price metrics."""
-        # TODO: Implement market metrics analysis
-        # Consider: market cap vs total addressable market, volume trends, etc.
-        pass
-    
-    def _analyze_fundamentals(self, whitepaper_analysis):
-        """Analyze fundamental strengths from whitepaper."""
-        # TODO: Implement fundamental analysis
-        # Consider: technology innovation, use case strength, team quality
-        pass
-    
-    def _analyze_momentum(self, historical_data):
-        """Analyze price momentum and trends."""
-        # TODO: Implement momentum analysis
-        # Consider: price trends, support/resistance levels, volatility
-        pass
-    
-    def _analyze_sentiment(self, market_data):
-        """Analyze market sentiment indicators."""
-        # TODO: Implement sentiment analysis
-        # Consider: volume spikes, social media sentiment, news sentiment
-        pass
-    
-    def _calculate_weighted_score(self, scores):
-        """Calculate weighted overall score."""
-        # TODO: Implement weighted scoring
-        pass
-    
-    def _get_recommendation(self, overall_score):
-        """Convert score to BUY/HOLD/AVOID recommendation."""
-        if overall_score >= 75:
-            return "BUY"
-        elif overall_score >= 40:
-            return "HOLD"
+def run_test(coin_data: dict, whitepaper: dict):
+    """
+    coin_data: dict from fetcher (price, circulating, max_supply, etc.)
+    whitepaper: dict with 'new_coins_per_year' and 'value_locked_usd'
+    """
+    price = coin_data["price"]
+    circulating = coin_data["circulating"]
+    max_supply = coin_data.get("max_supply") or coin_data.get("total_supply")
+
+    # ---- 1. Inflation ----
+    new_coins = whitepaper["new_coins_per_year"]
+    inflation = (new_coins / circulating) * 100
+
+    # ---- 2. FDMC ----
+    fdmc = price * max_supply if max_supply else None
+
+    # ---- 3. Value Locked Ratio ----
+    value_locked = whitepaper["value_locked_usd"]
+    ratio = fdmc / value_locked if fdmc and value_locked else None
+
+    # ---- 4. Print Results ----
+    print("\n" + "="*50)
+    print(f"UNDERVALUED TEST: {coin_data['name'].upper()}")
+    print("="*50)
+    print(f"Price: ${price:,.2f}")
+    print(f"Circulating: {circulating:,.0f}")
+    print(f"Max Supply: {max_supply:,.0f}" if max_supply else "No max supply")
+    print(f"Inflation: {inflation:.2f}%")
+    if fdmc:
+        print(f"FDMC: ${fdmc:,.0f}")
+    print(f"Value Locked: ${value_locked:,.0f}")
+
+    # ---- 5. Verdict ----
+    if inflation > 10:
+        print("Inflation > 10% → AVOID")
+    elif inflation > 3:
+        print("Inflation 3–10% → Medium")
+    else:
+        print("Inflation < 3% → SCARCE! GOOD")
+
+    if ratio:
+        print(f"FDMC / Value Locked = {ratio:.1f}x")
+        if ratio < 3:
+            print("→ UNDERVALUED! BUY")
+        elif ratio < 10:
+            print("→ Fair price, HOLD")
         else:
-            return "AVOID"
-    
-    def _generate_reasoning(self, scores, recommendation):
-        """Generate human-readable reasoning for the recommendation."""
-        # TODO: Implement reasoning generation
-        pass
+            print("→ Overvalued, SELL/AVOID")
+    else:
+        print("Missing data → Can't judge FDMC")
+
+    print("="*50)
