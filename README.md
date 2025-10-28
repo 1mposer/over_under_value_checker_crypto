@@ -52,7 +52,7 @@ python main.py Ethereum
 - **40-74 Score**: **HOLD** - Fair value, monitor for changes
 - **<40 Score**: **AVOID** - Overvalued or high risk
 
-## 🗂️ Project Structure
+## Project Structure
 
 ```
 crypto-value-checker/
