@@ -1,0 +1,2 @@
+# Combined dependencies for both crypto and Dubai property modules
+# Will be updated with specific packages as needed

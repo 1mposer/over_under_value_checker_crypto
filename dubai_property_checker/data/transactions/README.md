@@ -1,0 +1,1 @@
+# DLD (Dubai Land Department) transaction data directory

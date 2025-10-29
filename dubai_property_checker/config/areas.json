@@ -1,0 +1,9 @@
+{
+
+  "area_yields": {
+    "dubai-marina": {"min": 5.5, "avg": 6.8, "max": 8.2},
+    "downtown-dubai": {"min": 4.5, "avg": 5.8, "max": 7.0},
+    "jbr": {"min": 5.0, "avg": 6.5, "max": 7.8}
+  }
+
+}
